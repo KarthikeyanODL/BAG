@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rakuten-vote-back
+spec:
+  replicas: 1
+  selector:
+           matchLabels:
+                   app: rakuten-vote-back
+  template:
+    metadata:
+      labels:
+        app: rakuten-vote-back
+    spec:
+      containers:
+      - name: rakuten-vote-back
+        image: redis
+        ports:
+        - containerPort: 6379
+          name: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rakuten-vote-back
+spec:
+  ports:
+  - port: 6379
+  selector:
+    app: rakuten-vote-back
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rakuten-vote-front
+spec:
+  replicas: 1
+  selector:
+        matchLabels:
+                app: rakuten-vote-front
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: rakuten-vote-front
+    spec:
+      containers:
+      - name: rakuten-vote-front
+        image: microsoft/azure-vote-front:v1
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 250m
+          limits:
+            cpu: 500m
+        env:
+        - name: REDIS
+          value: "rakuten-vote-back"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rakuten-vote-front
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: rakuten-vote-front
