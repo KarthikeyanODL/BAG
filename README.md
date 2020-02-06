@@ -1,2 +1,2 @@
-# DAG
-DAG
+# BAG
+Bundle Auto Generator
