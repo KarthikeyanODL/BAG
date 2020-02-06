@@ -1,3 +1,11 @@
+# -----------------------------------------------------------
+# BAG Application
+#
+# (C) 2020 Rakuten
+# name Karthik
+# email karthikey.dhandapani@rakuten.com
+# -----------------------------------------------------------
+
 from api import core
 from flask import Flask, jsonify, send_file, render_template
 from flask import request
@@ -6,14 +14,16 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-
-# 1. init
+"""
+1. Home page 
+"""
 @app.route('/index')
-def student():
+def index():
     return render_template('index.html')
 
-
-# 2.Method to upload bundle
+"""
+2. Method to create bundle
+"""
 @app.route("/create/bundle", methods=['POST', 'PUT'])
 def create_bundle():
     if request.method == 'POST':
@@ -26,8 +36,9 @@ def create_bundle():
 
     return jsonify(status='Bundle is created', code=201)
 
-
-# 3.Method to upload bundle
+"""
+3. Method to upload bundle
+"""
 @app.route("/upload/bundle", methods=['POST', 'PUT'])
 def upload_models():
     print(request.method)
@@ -42,14 +53,15 @@ def upload_models():
 
     return jsonify(status='Bundle is saved', code=201)
 
-
-# 4.Method to get the encoded file as zip
-@app.route("/get/encoded_zip" , methods=['GET'])
+"""
+4.Method to get the encoded file as zip
+"""
+@app.route("/get/bundle_zip", methods=['GET'])
 def get_encoded_zipfile():
     if request.method == 'GET':
         try:
-            zip_file = core.get_encoded_zip_file()
-            return send_file(zip_file, attachment_filename='bundle.zip', as_attachment=True)
+            zip_file = core.get_bundle_zip()
+            return send_file(zip_file, attachment_filename='bundle.tar.gz', as_attachment=True)
 
         except Exception as exception:
             return jsonify(status=exception.args[0], code=500)

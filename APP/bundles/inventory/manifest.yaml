@@ -1,0 +1,47 @@
+azure-vote-back:
+  addvolume: enabled
+  compute:
+    cpu:
+      cores: 1
+      reserve: true
+    memory: 1024M
+  description: Voting Application
+  image:
+    engine: docker
+    name: redis
+    version: latest
+  name: voting Application backend layer
+  rolling_upgrade: true
+  scaleout: enabled
+  service_ports:
+  - 6379
+azure-vote-front:
+  addvolume: enabled
+  compute:
+    cpu:
+      cores: 1
+      reserve: true
+    memory: 1024M
+  description: Voting Application
+  env:
+    REDIS: azure-vote-back
+  image:
+    engine: docker
+    name: microsoft/azure-vote-front
+    version: v1
+  name: voting Application front layer
+  rolling_upgrade: true
+  scaleout: enabled
+  service_ports:
+  - 80
+clone: enabled
+clonemode: unfenced
+description: voting-application
+icon: vote.png
+name: vote
+roles:
+- azure-vote-back
+- azure-vote-front
+serialize: true
+snapshot: enabled
+version: 1
